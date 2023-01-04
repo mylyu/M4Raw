@@ -3,7 +3,7 @@ A Multi-Contrast Multi-Repetition Multi-Channel Raw K-space Dataset for Low-Fiel
  
 
 # Synopsis
-We release a new raw k-space dataset M4Raw acquired by the low-field MRI. Currently, it contains multi-channel brain data of 180 subjects each with 18 slices x 3 contrasts (T1w, T2w, and FLAIR). Moreover, each contrast consists of two or three repetitions (a.k.a. NEXs), leading to more than 25k trainable slices in total, which can be used in various ways by the low-field MRI community.
+We release a new raw k-space dataset M4Raw acquired by the low-field MRI. Currently, it contains multi-channel brain data of 183 subjects each with 18 slices x 3 contrasts (T1w, T2w, and FLAIR). Moreover, each contrast consists of two or three repetitions (a.k.a. NEXs), leading to more than 1k trainable volumes in total, which can be used in various ways by the low-field MRI community.
 
 # Quick Start
 1. Download the sample data of one subject (three T2w, three T1w, and two FLAIR scans) from this link.
