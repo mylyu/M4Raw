@@ -1,6 +1,8 @@
 # M4Raw
 A Multi-Contrast Multi-Repetition Multi-Channel Raw K-space Dataset for Low-Field MRI Reconstruction
  
+# The complete dataset has been uploaded to Zenodo
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7523691.svg)](https://doi.org/10.5281/zenodo.7523691)
 
 # Synopsis
 We release a new raw k-space dataset M4Raw acquired by the low-field MRI. Currently, it contains multi-channel brain data of 183 subjects each with 18 slices x 3 contrasts (T1w, T2w, and FLAIR). Moreover, each contrast consists of two or three repetitions (a.k.a. NEXs), leading to more than 1k trainable volumes in total, which can be used in various ways by the low-field MRI community.
@@ -13,9 +15,6 @@ https://drive.google.com/drive/folders/1RQT9oqoBd0xsevhyKSCxKiLuoEb2erhB?usp=sha
 
 3. run the jupter notebook "M4Raw_tutorial.ipynb".
 
-# More data and code are coming soon.
-We plan to release training code for baseline denoising/reconstruction models.
-You are welcome to ask questions or send feedback in the "Issues". Please help us to improve this project :)
 
 _________________
 
