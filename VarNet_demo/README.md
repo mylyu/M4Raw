@@ -49,9 +49,6 @@ paper:
 
 ## Implementation Notes
 
-The leaderboard model was trained where the `train` split included both the
-`train` and `val` splits from the public data.
-
 There are a few differences between this implementation and the
 [paper][e2evarnet].
 
