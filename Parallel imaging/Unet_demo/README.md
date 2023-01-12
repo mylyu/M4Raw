@@ -34,4 +34,3 @@ sh train.sh
 ```
 
 You need to modify the contents of the.sh file as required, such as the number of GPUs and the root directory for storing data.
-```
