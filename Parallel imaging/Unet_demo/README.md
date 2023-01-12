@@ -9,40 +9,29 @@ which was used as a baseline model in
 
 [fastMRI: An Open Dataset and Benchmarks for Accelerated MRI ({J. Zbontar*, F. Knoll*, A. Sriram*} et al., 2018)](https://arxiv.org/abs/1811.08839)
 
-To start training the model, run:
+The first thing you need to do is install fastMRI in your Python environment:
 
 ```bash
-python train_unet_demo.py
+pip install fastMRI
 ```
 
-If you run with no arguments, the script will create a `fastmri_dirs.yaml` file
-in the root directory that you can use to store paths for your system. You can
-also pass options at the command line:
+Then the M4Raw data set is divided into multicoil_train, multicoil_val and multicoil_test:
+
+```
+data_root_path
+---multicoil_train
+------***.h5
+---multicoil_val
+------***.h5
+---multicoil_test
+------***.h5
+```
+
+To start training demo the model, run:
 
 ```bash
-python train_unet_demo.py \
-    --challenge CHALLENGE \
-    --data_path DATA \
-    --mask_type MASK_TYPE
+sh train.sh
 ```
 
-where `CHALLENGE` is either `singlecoil` or `multicoil` and `MASK_TYPE` is
-either `random` (for knee) or `equispaced` (for brain). Training logs and
-checkpoints are saved in the current working directory by default.
-
-To run the model on test data:
-
-```bash
-python train_unet_demo.py \
-    --mode test \
-    --test_split TESTSPLIT \
-    --challenge CHALLENGE \
-    --data_path DATA \
-    --resume_from_checkpoint MODEL
+You need to modify the contents of the.sh file as required, such as the number of GPUs and the root directory for storing data.
 ```
-
-where `MODEL` is the path to the model checkpoint.`TESTSPLIT` should specify
-the test split you want to run on - either `test` or `challenge`.
-
-The outputs will be saved to `reconstructions` directory which can be uploaded
-for submission.
