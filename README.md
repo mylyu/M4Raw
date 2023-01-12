@@ -19,8 +19,9 @@ https://drive.google.com/drive/folders/1RQT9oqoBd0xsevhyKSCxKiLuoEb2erhB?usp=sha
 _________________
 
 # TAKE A QUICK LOOK
+<img src="https://user-images.githubusercontent.com/10205514/211978406-a4fc010e-b3f9-4d65-bf97-ec2abc8db725.png" height="400" />
 
-![image](https://user-images.githubusercontent.com/10205514/203816262-09033556-b5f6-43a3-9dbd-b1dad7e7100a.png)
+
 _________________
 
 ** Note: M4Raw is a collaborative research project by Shenzhen Technology University (SZTU), the University of Hong Kong (HKU), Jinan University (JNU), and Shenzhen Samii Medical Center (SSMC).
