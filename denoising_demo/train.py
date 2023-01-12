@@ -49,8 +49,8 @@ def main():
     parser.add_argument('--output_nc', default=1, type=int)
 
     ## dataloader setting
-    parser.add_argument('--traindata_root', default='/data0/M4RawV1.0/train/',type=str)
-    parser.add_argument('--testdata_root', default='/data0/M4RawV1.0/val/',type=str)
+    parser.add_argument('--traindata_root', default='/data0/M4RawV1.0/multicoil_train/',type=str)
+    parser.add_argument('--testdata_root', default='/data0/M4RawV1.0/multicoil_val/',type=str)
     parser.add_argument('--dataset', default='M4Raw', type=str, help='M4Raw | fastMRI')
     parser.add_argument('--modal', default='T1', type=str, help='T1 | T2 | FLAIR | ALL')
     parser.add_argument('--trainset', default='TrainSet', type=str, help='TrainSet | FastMRITrainSet')
