@@ -1,5 +1,5 @@
 # M4Raw
-A Multi-Contrast Multi-Repetition Multi-Channel Raw K-space Dataset for Low-Field MRI Reconstruction
+M4Raw: A multi-contrast, multi-repetition, multi-slice, multi-channel raw k-space dataset for low-field magnetic resonance image reconstruction
  
 # The complete dataset has been uploaded to Zenodo
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7523691.svg)](https://doi.org/10.5281/zenodo.7523691)
