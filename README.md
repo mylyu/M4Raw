@@ -2,6 +2,8 @@
 M4Raw: A multi-contrast, multi-repetition, multi-channel MRI k-space dataset for low-field MRI research
 
 # The complete dataset has been uploaded to Zenodo
+https://doi.org/10.5281/zenodo.7523691
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7523691.svg)](https://doi.org/10.5281/zenodo.7523691)
 
 # Abstract
