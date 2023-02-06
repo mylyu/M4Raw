@@ -24,6 +24,12 @@ _________________
 <img src="https://user-images.githubusercontent.com/10205514/211978406-a4fc010e-b3f9-4d65-bf97-ec2abc8db725.png" height="400" />
 
 
+# News
+
+**2023/02/06**: The M4Raw pretrained model weights have been uploaded to github (see Release).
+
+**2023/01/11**: The complete M4Raw dataset has been released to https://zenodo.org/record/7523691 .
+
 _________________
 
 ** Note: M4Raw is a collaborative research project by Shenzhen Technology University (SZTU), the University of Hong Kong (HKU), Jinan University (JNU), and Shenzhen Samii Medical Center (SSMC).
