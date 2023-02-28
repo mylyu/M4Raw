@@ -15,6 +15,28 @@ Recently, low-field magnetic resonance imaging (MRI) has gained renewed interest
 
 <img src="https://user-images.githubusercontent.com/10205514/218274571-a69e84ef-6b02-46fc-9457-68b0cda0d96b.png" height="400" />
 
+# Cite as (BibTeX)
+@dataset{lyu_mengye_2023_7523691,
+  author       = {Lyu, Mengye and
+                  Mei, Lifeng and
+                  Huang, Shoujin and
+                  Liu, Sixing and
+                  Li, Yi and
+                  Yang, Kexin and
+                  Liu, Yilong and
+                  Dong, Yu and
+                  Dong, Linzheng and
+                  Wu, Ed X.},
+  title        = {{M4Raw: A multi-contrast, multi-repetition, multi- 
+                   channel MRI k-space dataset for low-field MRI
+                   research}},
+  month        = jan,
+  year         = 2023,
+  publisher    = {Zenodo},
+  version      = {1.1},
+  doi          = {10.5281/zenodo.7523691},
+  url          = {https://doi.org/10.5281/zenodo.7523691}
+}
 # Quick Start
 1. Download the sample data of one subject (three T2w scans, three T1w scans, and two FLAIR scans) from this link.
 https://drive.google.com/drive/folders/1RQT9oqoBd0xsevhyKSCxKiLuoEb2erhB?usp=share_link
