@@ -11,7 +11,26 @@ Link：https://pan.baidu.com/s/10MikOaLpsF86RP4wYIbNhw?pwd=kizp
 passcode：kizp
 
 A journal paper about this work is under review.
+# Publication
+If you find our work useful in your research or publication, please cite our work:
 
+[1] Lyu, M., Mei, L., Huang, S. et al. M4Raw: A multi-contrast, multi-repetition, multi-channel MRI k-space dataset for low-field MRI research. Sci Data 10, 264 (2023). https://doi.org/10.1038/s41597-023-02181-4
+```
+@article{lyu_m4raw_2023,
+ title = {{M4Raw}: {A} multi-contrast, multi-repetition, multi-channel {MRI} k-space dataset for low-field {MRI} research},
+ volume = {10},
+ issn = {2052-4463},
+ url = {https://doi.org/10.1038/s41597-023-02181-4},
+ doi = {10.1038/s41597-023-02181-4},
+ abstract = {Recently, low-field magnetic resonance imaging (MRI) has gained renewed interest to promote MRI accessibility and affordability worldwide. The presented M4Raw dataset aims to facilitate methodology development and reproducible research in this field. The dataset comprises multi-channel brain k-space data collected from 183 healthy volunteers using a 0.3 Tesla whole-body MRI system, and includes T1-weighted, T2-weighted, and fluid attenuated inversion recovery (FLAIR) images with in-plane resolution of {\textasciitilde}1.2 mm and through-plane resolution of 5 mm. Importantly, each contrast contains multiple repetitions, which can be used individually or to form multi-repetition averaged images. After excluding motion-corrupted data, the partitioned training and validation subsets contain 1024 and 240 volumes, respectively. To demonstrate the potential utility of this dataset, we trained deep learning models for image denoising and parallel imaging tasks and compared their performance with traditional reconstruction methods. This M4Raw dataset will be valuable for the development of advanced data-driven methods specifically for low-field MRI. It can also serve as a benchmark dataset for general MRI reconstruction algorithms.},
+ number = {1},
+ journal = {Scientific Data},
+ author = {Lyu, Mengye and Mei, Lifeng and Huang, Shoujin and Liu, Sixing and Li, Yi and Yang, Kexin and Liu, Yilong and Dong, Yu and Dong, Linzheng and Wu, Ed X.},
+ month = may,
+ year = {2023},
+ pages = {264},
+}
+```
 # Abstract
 Recently, low-field magnetic resonance imaging (MRI) has gained renewed interest to promote MRI accessibility and affordability worldwide. The presented M4Raw dataset aims to facilitate methodology development and reproducible research in this field. The dataset comprises multi-channel brain k-space data collected from 183 healthy volunteers using a 0.3 Tesla whole-body MRI system, and includes T1-weighted, T2-weighted, and fluid attenuated inversion recovery (FLAIR) images with in-plane resolution of ~1.2 mm and through-plane resolution of 5 mm. Importantly, each contrast contains multiple repetitions, which can be used individually or to form multi-repetition averaged images. After excluding motion-corrupted data, the partitioned training and validation subsets contain 1024 and 240 volumes, respectively. To demonstrate the potential utility of this dataset, we trained deep learning models for image denoising and parallel imaging tasks and compared their performance with traditional reconstruction methods. This M4Raw dataset will be valuable for the development of advanced data-driven methods specifically for low-field MRI. It can also serve as a benchmark dataset for general MRI reconstruction algorithms.
 
