@@ -1,16 +1,11 @@
 # M4Raw
 M4Raw: A multi-contrast, multi-repetition, multi-channel MRI k-space dataset for low-field MRI research
 
-# The complete dataset has been uploaded to Zenodo
-https://doi.org/10.5281/zenodo.7523691
+# The complete dataset V1.5 has been uploaded to Zenodo
+[https://doi.org/10.5281/zenodo.7523691](https://zenodo.org/record/7998442)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7523691.svg)](https://doi.org/10.5281/zenodo.7523691)
 
-It can also be downloaded from BaiduYun
-Link：https://pan.baidu.com/s/10MikOaLpsF86RP4wYIbNhw?pwd=kizp 
-passcode：kizp
-
-A journal paper about this work is under review.
 # Publication
 If you find our work useful in your research or publication, please cite our work:
 
@@ -52,10 +47,11 @@ _________________
 
 
 # News
+**2023/06/02**: The M4Raw V1.5 has been released to include GRE data https://zenodo.org/record/7998442.
 
 **2023/02/06**: The M4Raw pretrained model weights have been uploaded to github (see Release).
 
-**2023/01/11**: The complete M4Raw dataset has been released to https://zenodo.org/record/7523691 .
+**2023/01/11**: The complete M4Raw dataset has been released to zenodo.org.
 
 _________________
 
