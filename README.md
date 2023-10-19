@@ -6,6 +6,12 @@ M4Raw: A multi-contrast, multi-repetition, multi-channel MRI k-space dataset for
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8056074.svg)](https://doi.org/10.5281/zenodo.8056074)
 
+Or you can download from BaiduYun
+
+link：https://pan.baidu.com/s/1CqNFMDnrNuXe_qWSyiSA2w?pwd=4mjr 
+
+passcode：4mjr 
+
 # Publication
 If you find our work useful in your research or publication, please cite our work:
 
