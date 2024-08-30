@@ -64,7 +64,7 @@ class TrainSet(Dataset):
             for j,path in enumerate(all[i]):
                 self.images[j][i] = read_h5(path)
         self.labels = np.mean(self.images,axis=1)
-        print('over load')
+        print('Finished loading')
         
         self.images = self.images.transpose(0,2,1,3,4).reshape(-1,len(all),256,256)
         self.labels = self.labels.reshape(-1,1,256,256)
@@ -108,7 +108,7 @@ class TestSet(Dataset):
             for j,path in enumerate(all[i]):
                 self.images[j][i] = read_h5(path)
         self.labels = np.mean(self.images,axis=1)
-        print('over load')
+        print('Finished loading')
         
         self.images = self.images.transpose(0,2,1,3,4).reshape(-1,len(all),256,256)
         self.labels = self.labels.reshape(-1,1,256,256)
