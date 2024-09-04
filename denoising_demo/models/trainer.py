@@ -249,7 +249,8 @@ class Trainer(object):
 
         ## end of training
         if self.args.rank <= 0:
-            tb_logger.close()
+            if self.args.use_tb_logger:
+                tb_logger.close()
             self.save_networks('net', 'final')
             logging.info('The training stage on %s is over!!!' % (self.args.dataset))
 
