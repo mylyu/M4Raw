@@ -13,7 +13,7 @@ import torch
 import torch.nn as nn
 from torch.nn.parallel import DistributedDataParallel
 from torch.autograd import Variable
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from torch.optim.lr_scheduler import CosineAnnealingLR,CosineAnnealingWarmRestarts
 import torchvision
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
@@ -37,30 +37,74 @@ class Trainer(object):
         self.device = torch.device('cuda' if len(args.gpu_ids) != 0 else 'cpu')
         args.device = self.device
 
-
-        ## init dataloader
+        ## Initialize dataloader
         if args.phase == 'train':
             trainset_ = getattr(importlib.import_module('dataloader.dataset'), args.trainset, None)
-            if args.modal == 'ALL':
-                self.args.modal = 'T1'
-                self.train_dataset1 = trainset_(self.args)
-                self.args.modal = 'T2'
-                self.train_dataset2 = trainset_(self.args)
-                self.args.modal = 'FLAIR'
-                self.train_dataset3 = trainset_(self.args)
-                self.train_dataset = self.train_dataset1 + self.train_dataset2 + self.train_dataset3
-            else:
-                self.train_dataset = trainset_(self.args)
+            if args.trainset == 'PNGDataset':
+                if args.rank <= 0:
+                    logging.info('loading PNG training dataset')
+                self.train_dataset = trainset_(
+                    folder_path=args.traindata_root,
+                    split_ratio=args.split_ratio,
+                    train=True,
+                    image_size=args.image_size,
+                    noise_std_range=(args.noise_std_low,args.noise_std_high),
+                    seed=args.seed
+                )
+            elif args.trainset == 'TrainSet':
+                if self.args.modal == 'ALL':
+                    if args.rank <= 0:
+                        logging.info('reading training data for all contrasts')
+                    self.args.modal = 'T1'
+                    self.train_dataset1 = trainset_(self.args)
+                    self.args.modal = 'T2'
+                    self.train_dataset2 = trainset_(self.args)
+                    self.args.modal = 'FLAIR'
+                    self.train_dataset3 = trainset_(self.args)
+                    self.train_dataset = self.train_dataset1 + self.train_dataset2 + self.train_dataset3
+                    self.args.modal = 'ALL'  # restore the setting
+                else:
+                    self.train_dataset = trainset_(self.args)
+            if args.rank <= 0:
+                logging.info('found %d training samples' % (self.train_dataset.__len__()))
+
             if args.dist:
                 dataset_ratio = 1
                 train_sampler = DistIterSampler(self.train_dataset, args.world_size, args.rank, dataset_ratio)
                 self.train_dataloader = create_dataloader(self.train_dataset, args, train_sampler)
             else:
                 self.train_dataloader = DataLoader(self.train_dataset, batch_size=args.batch_size, num_workers=args.num_workers, shuffle=True)
-
+        
         testset_ = getattr(importlib.import_module('dataloader.dataset'), args.testset, None)
-        self.test_dataset = testset_(self.args)
+        if args.testset == 'PNGDataset':
+            if args.rank <= 0:
+                logging.info('loading PNG test dataset')
+            self.test_dataset = testset_(
+                folder_path=args.testdata_root,
+                split_ratio=args.split_ratio,
+                train=False,
+                image_size=args.image_size,
+                noise_std_range=(args.noise_std_low,args.noise_std_high),
+                seed=args.seed
+            )
+        elif args.testset == 'TestSet':
+            if self.args.val_modal == 'ALL':
+                if args.rank <= 0:
+                    logging.info('reading test/val data for all contrasts')
+                self.args.val_modal = 'T1'
+                self.test_dataset1 = testset_(self.args)
+                self.args.val_modal = 'T2'
+                self.test_dataset2 = testset_(self.args)
+                self.args.val_modal = 'FLAIR'
+                self.test_dataset3 = testset_(self.args)
+                self.test_dataset = self.test_dataset1 + self.test_dataset2 + self.test_dataset3
+                self.args.val_modal = 'ALL'  # restore the setting
+            else:
+                self.test_dataset = testset_(self.args)
+        if args.rank <= 0:
+            logging.info('found %d test/val samples' % (self.test_dataset.__len__()))
         self.test_dataloader = DataLoader(self.test_dataset, batch_size=1, num_workers=args.num_workers, shuffle=False)
+        
 
         ## init network
         self.net = define_G(args)
@@ -97,7 +141,7 @@ class Trainer(object):
                     logging.info('  using adv loss...')
 
             self.optimizer_G = torch.optim.Adam(itertools.chain.from_iterable(g_params), lr=args.lr, weight_decay=args.weight_decay)
-            self.scheduler = CosineAnnealingLR(self.optimizer_G, T_max=500)  # T_max=args.max_iter
+            self.scheduler = CosineAnnealingLR(self.optimizer_G, T_max=self.args.max_iter//self.args.T_max_factor, eta_min=self.args.eta_min)  # T_max=args.max_iter
 
             if args.resume_optim:
                 self.load_networks('optimizer_G', self.args.resume_optim)
@@ -140,16 +184,19 @@ class Trainer(object):
             logging.info('%d training samples' % (self.train_dataset.__len__()))
             logging.info('the init lr: %f'%(self.args.lr))
         steps = 0
-        self.net.train()
-
+        
         if self.args.use_tb_logger:
             if self.args.rank <= 0:
                 tb_logger = SummaryWriter(log_dir='tb_logger/' + self.args.name)
 
         self.best_psnr = 0
+        self.best_psnr_epoch = -1
         self.augmentation = False  # disenable data augmentation to warm up the encoder
         for i in range(self.args.start_iter, self.args.max_iter):
+            self.net.train()
             self.scheduler.step()
+            if self.args.dist:
+                self.train_dataloader.sampler.set_epoch(i)
             logging.info('current_lr: %f' % (self.optimizer_G.param_groups[0]['lr']))
             t0 = time.time()
             for j, batch_samples in enumerate(self.train_dataloader):
@@ -189,6 +236,9 @@ class Trainer(object):
 
                 log_info += 'loss_sum:%f ' % (loss.item())
                 loss.backward()
+                # prevent 
+                clip_value=0.1
+                torch.nn.utils.clip_grad_norm_(self.net.parameters(), clip_value)
                 self.optimizer_G.step()
 
                 ## print information
@@ -221,31 +271,34 @@ class Trainer(object):
                 steps += 1
 
             ## save networks
-            if i % self.args.save_epoch_freq == 0:
+            if (i+1) % self.args.save_epoch_freq == 0:
                 if self.args.rank <= 0:
                     logging.info('Saving state, epoch: %d iter:%d' % (i, 0))
                     self.save_networks('net', i)
                     self.save_networks('optimizer_G', i)
                     self.save_networks('scheduler', i)
 
-            if not self.args.loss_adv:
-                if i > 200 and self.args.modal != 'ALL':
-                    self.args.phase = 'eval'
-                    psnr, ssim,psnr_std,ssim_std = self.evaluate()
+            if i>=0 and (i+1) % self.args.test_freq == 0:
+                self.args.phase = 'eval'
+                psnr, ssim, psnr_std,ssim_std = self.evaluate()
+                if self.args.rank <= 0:
                     logging.info('Mean: psnr:%.06f   ssim:%.06f ' % (psnr, ssim))
                     logging.info('Std : psnr:%.06f   ssim:%.06f ' % (psnr_std,ssim_std))
-                    if psnr > self.best_psnr:
-                        self.best_psnr = psnr
-                        if self.args.rank <= 0:
-                            logging.info('best_psnr:%.06f ' % (self.best_psnr))
-                            logging.info('Saving state, epoch: %d iter:%d' % (i, 0))
-                            self.save_networks('net', 'best')
-                            self.save_networks('optimizer_G', 'best')
-                            self.save_networks('scheduler', 'best')
-                        ## start data augmentation
-                        if i > 30:
-                            self.augmentation = self.args.data_augmentation
-                    self.args.phase = 'train'
+                    logging.info('best_psnr was:%.06f  at epoch: %d' % (self.best_psnr, self.best_psnr_epoch))
+                if psnr > self.best_psnr:
+                    self.best_psnr = psnr
+                    self.best_psnr_epoch = i
+                    if self.args.rank <= 0:
+                        logging.info('new best SNR')
+                        logging.info('best_psnr:%.06f ' % (self.best_psnr))
+                        logging.info('Saving state, epoch: %d iter:%d' % (i, 0))
+                        self.save_networks('net', 'best')
+                        self.save_networks('optimizer_G', 'best')
+                        self.save_networks('scheduler', 'best')
+                    ## start data augmentation
+                    if i > 30:
+                        self.augmentation = self.args.data_augmentation
+                self.args.phase = 'train'
 
         ## end of training
         if self.args.rank <= 0:
@@ -253,6 +306,7 @@ class Trainer(object):
                 tb_logger.close()
             self.save_networks('net', 'final')
             logging.info('The training stage on %s is over!!!' % (self.args.dataset))
+            logging.info('best_psnr was:%.06f  at epoch: %d' % (self.best_psnr, self.best_psnr_epoch))
 
 
     def test(self):
@@ -262,7 +316,7 @@ class Trainer(object):
 
         PSNR = []
         SSIM = []
-        predictions = np.zeros([648,256,256])
+        # predictions = np.zeros([648,256,256])
         with torch.no_grad():
             for batch, batch_samples in enumerate(self.test_dataloader):
                 batch_samples = self.prepare(batch_samples)
@@ -274,10 +328,10 @@ class Trainer(object):
 
                 output_img = output.detach().cpu().numpy().astype(np.float32)[0][0]
                 gt = labels.detach().cpu().numpy().astype(np.float32)[0][0]
-                predictions[batch] = output_img
+                # predictions[batch] = output_img
 
-                psnr = peak_signal_noise_ratio(output_img, gt,data_range=1)
-                ssim = structural_similarity(output_img, gt,data_range=1)
+                psnr = peak_signal_noise_ratio(output_img, gt, data_range=1)
+                ssim = structural_similarity(output_img, gt, data_range=1)
                 PSNR.append(psnr)
                 SSIM.append(ssim)
                 logging.info('psnr: %.4f    ssim: %.4f' % (psnr, ssim))
@@ -309,8 +363,8 @@ class Trainer(object):
                 output_img = output.detach().cpu().numpy().astype(np.float32)[0][0]
                 gt = labels.detach().cpu().numpy().astype(np.float32)[0][0]
 
-                psnr = peak_signal_noise_ratio(output_img, gt,data_range=1)
-                ssim = structural_similarity(output_img, gt,data_range=1)
+                psnr = peak_signal_noise_ratio(output_img, gt, data_range=1)
+                ssim = structural_similarity(output_img, gt, data_range=1)
                 PSNR.append(psnr)
                 SSIM.append(ssim)
 
@@ -337,7 +391,7 @@ class Trainer(object):
                 load_net_clean[k[7:]] = v
             else:
                 load_net_clean[k] = v
-        if 'optimizer' or 'scheduler' in net_name:
+        if 'optimizer' in net_name or 'scheduler' in net_name:
             network.load_state_dict(load_net_clean)
         else:
             network.load_state_dict(load_net_clean, strict=strict)
@@ -350,7 +404,7 @@ class Trainer(object):
         if isinstance(network, nn.DataParallel) or isinstance(network, DistributedDataParallel):
             network = network.module
         state_dict = network.state_dict()
-        if not 'optimizer' and not 'scheduler' in net_name:
+        if 'optimizer' not in net_name and 'scheduler' not in net_name:
             for key, param in state_dict.items():
                 state_dict[key] = param.cpu()
         torch.save(state_dict, save_path)

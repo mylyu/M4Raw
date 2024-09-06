@@ -31,9 +31,10 @@ def main():
 
 
     ## dataloader setting
-    parser.add_argument('--testdata_root', default='/data0/M4RawV1.0/val/',type=str)
+    parser.add_argument('--testdata_root', default='/data0/M4RawV1.5/multicoil_val/',type=str)
     parser.add_argument('--dataset', default='M4Raw', type=str, help='M4Raw | fastMRI')
     parser.add_argument('--modal', default='T1', type=str, help='T1 | T2 | FLAIR | MutilContrast')
+    parser.add_argument('--val_modal', type=str, help='T1 | T2 | FLAIR | ALL, default to modal')
     parser.add_argument('--batch_size', default=1, type=int)
     parser.add_argument('--num_workers', default=4, type=int)
     parser.add_argument('--data_augmentation', default=False, type=bool)
@@ -45,6 +46,9 @@ def main():
 
     ## setup training environment
     args = parser.parse_args()
+
+    if args.val_modal is None:
+        args.val_modal = args.modal
 
     ## setup training device
     str_ids = args.gpu_ids.split(',')

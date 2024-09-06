@@ -41,24 +41,35 @@ def main():
     parser.add_argument('--gpu_ids', type=str, default='0,1', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
     parser.add_argument('--launcher', choices=['none', 'pytorch'], default='none',
                         help='job launcher')
-    parser.add_argument('--local_rank', type=int, default=0)
+    ## Changed in version 2.0.0: The launcher will pass the --local-rank=<rank> argument to your script. From PyTorch 2.0.0 onwards, the dashed --local-rank is preferred over the previously used underscored --local_rank. https://pytorch.org/docs/stable/elastic/run.html
+    parser.add_argument('--local-rank', type=int, default=0)
+    parser.add_argument('--local_rank', type=int, default=0) # For backward compatibility
 
     ## network setting
-    parser.add_argument('--net_name', default='RESUNET', type=str, help='RESTORMER | RESUNET | NAFNET')
+    parser.add_argument('--net_name', default='RESUNET', type=str, help='RESTORMER | RESUNET | NAFNET| SMPUNET| UNET')
     parser.add_argument('--input_nc', default=1, type=int)
     parser.add_argument('--output_nc', default=1, type=int)
 
     ## dataloader setting
-    parser.add_argument('--traindata_root', default='/data0/M4RawV1.0/multicoil_train/',type=str)
-    parser.add_argument('--testdata_root', default='/data0/M4RawV1.0/multicoil_val/',type=str)
-    parser.add_argument('--dataset', default='M4Raw', type=str, help='M4Raw | fastMRI')
+    parser.add_argument('--traindata_root', default='/data0/M4RawV1.5/multicoil_train/', type=str)
+    parser.add_argument('--testdata_root', default='/data0/M4RawV1.5/multicoil_val/', type=str)
+    parser.add_argument('--dataset', default='M4Raw', type=str, help='M4Raw | fastMRI | PNG')
     parser.add_argument('--modal', default='T1', type=str, help='T1 | T2 | FLAIR | ALL')
-    parser.add_argument('--trainset', default='TrainSet', type=str, help='TrainSet | FastMRITrainSet')
-    parser.add_argument('--testset', default='TestSet', type=str, help='TestSet | FastMRITestSet')
+    parser.add_argument('--val_modal', type=str, help='T1 | T2 | FLAIR | ALL, default to modal')
+    parser.add_argument('--trainset', default='TrainSet', type=str, help='TrainSet | FastMRITrainSet | PNGDataset')
+    parser.add_argument('--testset', default='TestSet', type=str, help='TestSet | FastMRITestSet | PNGDataset')
     parser.add_argument('--save_test_root', default='generated', type=str)
     parser.add_argument('--batch_size', default=9*4, type=int)
     parser.add_argument('--num_workers', default=9, type=int)
     parser.add_argument('--data_augmentation', action='store_true')
+    
+     # New arguments specific to PNGDataset
+    parser.add_argument('--image_size', default=256, type=int, help='Size to which PNG images will be resized')
+    parser.add_argument('--split_ratio', default=0.95, type=float, help='Ratio for train/test split for PNGDataset')
+    parser.add_argument('--noise_std_low', default=0.02, type=float, help='noise STD LB for PNGDataset')
+    parser.add_argument('--noise_std_high', default=0.06, type=float, help='noise STD HB for PNGDataset')
+    parser.add_argument('--seed', default=42, type=int, help='Random seed for splitting and noise generation')
+
 
     ## optim setting
     parser.add_argument('--lr', default=1e-4, type=float)
@@ -66,6 +77,8 @@ def main():
     parser.add_argument('--weight_decay', default=0, type=float)
     parser.add_argument('--start_iter', default=0, type=int)
     parser.add_argument('--max_iter', default=500, type=int)
+    parser.add_argument('--T_max_factor', default=1, type=int)
+    parser.add_argument('--eta_min', default=1e-7, type=float)
 
     parser.add_argument('--loss_l1', action='store_true')
     parser.add_argument('--loss_mse', action='store_true')
@@ -82,10 +95,10 @@ def main():
     parser.add_argument('--resume_scheduler', default='', type=str)
 
     ## log setting
-    parser.add_argument('--log_freq', default=10, type=int)
+    parser.add_argument('--log_freq', default=100, type=int)
     parser.add_argument('--vis_freq', default=50000, type=int) #50000
-    parser.add_argument('--save_epoch_freq', default=10, type=int) #100
-    parser.add_argument('--test_freq', default=100, type=int) #100
+    parser.add_argument('--save_epoch_freq', default=50, type=int) #100
+    parser.add_argument('--test_freq', default=10, type=int) #100
     parser.add_argument('--save_folder', default='./M4RawV1.0_experiment', type=str)
     parser.add_argument('--vis_step_freq', default=100, type=int)
     parser.add_argument('--use_tb_logger', action='store_true')
@@ -93,6 +106,10 @@ def main():
 
     ## setup training environment
     args = parser.parse_args()
+    
+    if args.val_modal is None:
+        args.val_modal = args.modal
+
     set_random_seed(args.random_seed)
 
     ## setup training device
@@ -135,6 +152,8 @@ def main():
     ## train model
     trainer = Trainer(args)
     trainer.train()
+    if args.dist:
+        dist.destroy_process_group()
 
 if __name__ == '__main__':
     main()
