@@ -6,6 +6,22 @@ M4Raw: A multi-contrast, multi-repetition, multi-channel MRI k-space dataset for
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8056074.svg)](https://doi.org/10.5281/zenodo.8056074)
 
+## Hugging Face release
+
+M4Raw Brain v1.6 is also available as an unarchived, file-level dataset on
+Hugging Face:
+
+**[huggingface.co/datasets/mylyu/M4Raw_brain](https://huggingface.co/datasets/mylyu/M4Raw_brain)**
+
+The Hugging Face release preserves the original H5 files byte-for-byte while
+making individual acquisitions and complete examinations accessible without
+downloading the full Zenodo archives. The dataset card provides searchable
+sequence and subject manifests, selective-download examples, H5 loading
+guidance, and the immutable [`v1.6.0`](https://huggingface.co/datasets/mylyu/M4Raw_brain/tree/v1.6.0)
+release tag.
+
+[![Representative M4Raw Brain single-acquisition and repeat-average images](https://huggingface.co/datasets/mylyu/M4Raw_brain/resolve/v1.6.0/assets/representative_images.png)](https://huggingface.co/datasets/mylyu/M4Raw_brain)
+
 Or you can download from BaiduYun
 
 link：https://pan.baidu.com/s/1CqNFMDnrNuXe_qWSyiSA2w?pwd=4mjr 
@@ -53,6 +69,8 @@ _________________
 
 
 # News
+**2026/08/20**: M4Raw Brain v1.6 is now available on [Hugging Face](https://huggingface.co/datasets/mylyu/M4Raw_brain), with individual-file access, metadata manifests, and reproducible loading examples.
+
 **2023/08/02**: The M4Raw V1.6 has been released to include test data of 25 subjects [https://zenodo.org/record/7998442](https://zenodo.org/record/8056074).
 
 **2023/06/02**: The M4Raw V1.5 has been released to include GRE data.
