@@ -1,12 +1,7 @@
 # M4Raw
 M4Raw: A multi-contrast, multi-repetition, multi-channel MRI k-space dataset for low-field MRI research
 
-# The complete dataset V1.6 has been uploaded to Zenodo with test data of 25 subjects.
-[https://doi.org/10.5281/zenodo.8056074](https://doi.org/10.5281/zenodo.8056074)
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8056074.svg)](https://doi.org/10.5281/zenodo.8056074)
-
-## Hugging Face release
+## Hugging Face release [2026.8.20]
 
 M4Raw Brain v1.6 is also available as an unarchived, file-level dataset on
 Hugging Face:
@@ -22,6 +17,10 @@ release tag.
 
 [![Representative M4Raw Brain single-acquisition and repeat-average images](https://huggingface.co/datasets/mylyu/M4Raw_brain/resolve/v1.6.0/assets/representative_images.png)](https://huggingface.co/datasets/mylyu/M4Raw_brain)
 
+## The complete dataset V1.6 has been uploaded with extra test data of 25 subjects. [2023.6.2]
+[https://doi.org/10.5281/zenodo.8056074](https://doi.org/10.5281/zenodo.8056074)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8056074.svg)](https://doi.org/10.5281/zenodo.8056074)
 Or you can download from BaiduYun
 
 link：https://pan.baidu.com/s/1CqNFMDnrNuXe_qWSyiSA2w?pwd=4mjr 
